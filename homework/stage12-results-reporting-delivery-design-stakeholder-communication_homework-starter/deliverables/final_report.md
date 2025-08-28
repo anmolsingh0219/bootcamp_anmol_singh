@@ -1,7 +1,6 @@
 # Options Pricing Model: Risk Assessment Report
 
 **Analysis Period:** Options Dataset (496 contracts)  
-**Date:** January 2025
 
 ---
 
