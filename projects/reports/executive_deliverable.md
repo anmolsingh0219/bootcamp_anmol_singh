@@ -271,6 +271,3 @@ The model demonstrates clear business value with manageable risks. The 78% impro
 
 **Document Classification**: Internal Use  
 **Next Review Date**: Quarterly  
-**Approval Required**: Executive Committee  
-**Technical Contact**: Quantitative Research Team  
-**Business Contact**: Trading Operations Manager
