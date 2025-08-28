@@ -36,5 +36,5 @@
     "test_samples": 83,
     "total_features": 21
   },
-  "model_path": "../models/random_forest_model.pkl"
+  "model_path": "./models/random_forest_model.pkl"
 }
