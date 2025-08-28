@@ -1,0 +1,40 @@
+{
+  "model_type": "random_forest",
+  "feature_names": [
+    "strike",
+    "implied_volatility",
+    "open_interest",
+    "volume",
+    "underlying_price",
+    "risk_free_rate",
+    "time_to_expiry",
+    "moneyness",
+    "relative_error_robust",
+    "bid_ask_spread",
+    "relative_spread",
+    "log_moneyness",
+    "sqrt_time",
+    "vega_proxy",
+    "liquidity_score",
+    "is_call",
+    "is_put",
+    "itm",
+    "otm",
+    "atm",
+    "contract_type"
+  ],
+  "training_date": "2025-08-28T15:51:57.099860",
+  "performance_metrics": {
+    "mae": 0.24421385982560795,
+    "rmse": 0.3555613149595388,
+    "r2": 0.5376428714082628,
+    "mean_error": 0.04578801903302783,
+    "std_error": 0.352600774260051
+  },
+  "data_info": {
+    "train_samples": 328,
+    "test_samples": 83,
+    "total_features": 21
+  },
+  "model_path": "../models/random_forest_model.pkl"
+}
