@@ -1,0 +1,12 @@
+﻿{
+  "confidence": 0.95,
+  "inputs": {
+    "implied_volatility": 0.25,
+    "moneyness": 1.05,
+    "vol_time": 0.05
+  },
+  "lower_bound": -97.61306294426569,
+  "prediction": 33.39144756133674,
+  "upper_bound": 164.3959580669392
+}
+
