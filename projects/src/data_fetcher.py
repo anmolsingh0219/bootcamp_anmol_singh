@@ -1,11 +1,9 @@
 import pandas as pd
-import numpy as np
 import yfinance as yf
 from datetime import datetime, timedelta
 import logging
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -181,7 +179,7 @@ class OptionsDataFetcher:
                 logger.info(f"Found {len(filtered_expirations)} short-term expiration dates")
             else:
                 # Use all available future expirations
-            filtered_expirations = [exp for exp in expirations 
+                filtered_expirations = [exp for exp in expirations 
                                       if pd.to_datetime(exp).date() >= today]
             
             if not filtered_expirations:

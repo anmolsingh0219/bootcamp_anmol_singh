@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.ensemble import IsolationForest
-from scipy import stats
 from typing import Tuple, Dict, Any
 import logging
 
@@ -15,44 +13,18 @@ class OptionsDataProcessor:
         self.feature_columns = None
     
     def clean_raw_data(self, df: pd.DataFrame, config: Dict[str, Any]) -> pd.DataFrame:
-        cleaned_df = df.copy()
+        """
+        Clean raw data using the dedicated cleaning module.
         
-        cleaned_df['time_to_expiry'] = (cleaned_df['expiration_date'] - pd.Timestamp.now()).dt.days / 365.0
-        cleaned_df['market_price'] = (cleaned_df['bid'] + cleaned_df['ask']) / 2.0
-        
-        # Handle cases where bid/ask are NaN - use last_price if available
-        mask_no_bid_ask = cleaned_df['market_price'].isna()
-        cleaned_df.loc[mask_no_bid_ask, 'market_price'] = cleaned_df.loc[mask_no_bid_ask, 'last_price']
-        
-        # Calculate moneyness (S/K ratio)
-        cleaned_df['moneyness'] = cleaned_df['underlying_price'] / cleaned_df['strike']
-
-        filters = [
-            (cleaned_df['volume'].fillna(0) >= config.get('MIN_VOLUME', 1)),
-            (cleaned_df['open_interest'].fillna(0) >= config.get('MIN_OPEN_INTEREST', 1)),
-            cleaned_df['time_to_expiry'] > config.get('MIN_TIME_TO_EXPIRY', 0.01),
-            cleaned_df['time_to_expiry'] <= 2.0,
-            cleaned_df['implied_volatility'].notna(),
-            cleaned_df['implied_volatility'] > 0,
-            cleaned_df['implied_volatility'] < 5.0,
-            cleaned_df['market_price'].notna(),
-            cleaned_df['market_price'] > 0,
-            cleaned_df['strike'] > 0,
-            cleaned_df['underlying_price'] > 0,
-            cleaned_df['moneyness'] > 0.1,
-            cleaned_df['moneyness'] < 3.0
-        ]
-        
-        combined_filter = pd.Series(True, index=cleaned_df.index)
-        for filter_condition in filters:
-            combined_filter &= filter_condition
-        
-        cleaned_df = cleaned_df[combined_filter].copy()
-        
-        logger.info(f"Data cleaning complete. Final shape: {cleaned_df.shape}")
-        logger.info(f"Removed {len(df) - len(cleaned_df)} rows during cleaning")
-        
-        return cleaned_df
+        Args:
+            df (pd.DataFrame): Raw options data
+            config (Dict[str, Any]): Configuration parameters
+            
+        Returns:
+            pd.DataFrame: Cleaned options data
+        """
+        from cleaning import clean_options_data
+        return clean_options_data(df, config)
     
     def engineer_features(self, df: pd.DataFrame) -> pd.DataFrame:
         feature_df = df.copy()
@@ -89,38 +61,20 @@ class OptionsDataProcessor:
     
     def detect_outliers(self, df: pd.DataFrame, method: str = 'isolation_forest', 
                        contamination: float = 0.1) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Detect outliers using the dedicated outliers module.
         
-        outlier_features = ['market_price', 'implied_volatility', 'moneyness', 
-                           'time_to_expiry', 'volume', 'open_interest']
-        outlier_features = [col for col in outlier_features if col in df.columns]
-        
-        if method == 'isolation_forest':
-            # Use Isolation Forest
-            iso_forest = IsolationForest(contamination=contamination, random_state=42)
-            outlier_labels = iso_forest.fit_predict(df[outlier_features].fillna(0))
-            is_outlier = outlier_labels == -1
+        Args:
+            df (pd.DataFrame): Input data
+            method (str): Detection method
+            contamination (float): Expected proportion of outliers
             
-        elif method == 'zscore':
-            # Use Z-score method (|z| > 3)
-            z_scores = np.abs(stats.zscore(df[outlier_features].fillna(0), axis=0))
-            is_outlier = (z_scores > 3).any(axis=1)
-            
-        elif method == 'iqr':
-            # Use IQR method
-            Q1 = df[outlier_features].quantile(0.25)
-            Q3 = df[outlier_features].quantile(0.75)
-            IQR = Q3 - Q1
-            is_outlier = ((df[outlier_features] < (Q1 - 1.5 * IQR)) | 
-                         (df[outlier_features] > (Q3 + 1.5 * IQR))).any(axis=1)
-        else:
-            raise ValueError(f"Unknown method: {method}")
-        
-        clean_data = df[~is_outlier].copy()
-        outliers = df[is_outlier].copy()
-        
-        logger.info(f"Outlier detection complete. Found {len(outliers)} outliers ({len(outliers)/len(df)*100:.2f}%)")
-        
-        return clean_data, outliers
+        Returns:
+            Tuple[pd.DataFrame, pd.DataFrame]: (clean_data, outliers)
+        """
+        from outliers import OutlierDetector
+        detector = OutlierDetector()
+        return detector.detect_outliers(df, method=method, contamination=contamination)
     
     def normalize_features(self, df: pd.DataFrame, method: str = 'standard', 
                           fit: bool = True) -> pd.DataFrame:

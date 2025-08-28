@@ -20,14 +20,18 @@ projects/
 │       └── training_data.csv         # Final training dataset with BS errors
 ├── src/                              # Source code
 │   ├── __init__.py                   # Package initialization
-│   ├── generate_data.py              # Script to download and process market data
+│   ├── data_fetcher.py               # Script to download and process market data
 │   ├── black_scholes.py              # Black-Scholes pricing implementation
-│   ├── data_preprocessing.py         # Data cleaning and feature engineering
-│   └── pricer_tool.py               # Final ML-enhanced pricing tool
+│   ├── data_processor.py             # Data cleaning and feature engineering
+│   ├── cleaning.py                   # Dedicated data cleaning functions
+│   ├── outliers.py                   # Outlier detection and analysis
+│   └── pricer_tool.py               # Final ML-enhanced pricing tool (coming next)
 ├── notebooks/                        # Jupyter notebooks for analysis
-│   ├── 01_data_exploration.ipynb     # Initial data analysis and visualization
-│   ├── 02_model_training.ipynb       # Model development and training
-│   └── 03_model_evaluation.ipynb     # Performance evaluation and validation
+│   ├── 01_data_fetching_and_processing.ipynb  # Data pipeline and processing
+│   ├── 02_exploratory_data_analysis.ipynb     # EDA and feature engineering
+│   ├── 03_sensitivity_outliers.ipynb          # Outlier analysis and sensitivity testing
+│   ├── 04_model_training.ipynb                # Model development and training (coming next)
+│   └── 05_model_evaluation.ipynb              # Performance evaluation and validation (coming next)
 └── docs/                             # Documentation
     ├── stakeholder_memo.md           # Project requirements and scope
     ├── model_validation_report.md    # Final model performance report
@@ -63,8 +67,9 @@ projects/
 ### Quick Start Workflow
 1. **Data Pipeline**: Run `notebooks/01_data_fetching_and_processing.ipynb` to fetch and process options data
 2. **Exploratory Analysis**: Use `notebooks/02_exploratory_data_analysis.ipynb` for comprehensive EDA
-3. **Model Training**: Open `notebooks/03_model_training.ipynb` to train the Random Forest model (coming next)
-4. **Pricing Tool**: Use the final pricing tool for ML-corrected option prices (coming next)
+3. **Outlier Analysis**: Run `notebooks/03_sensitivity_outliers.ipynb` for outlier detection and sensitivity analysis
+4. **Model Training**: Open `notebooks/04_model_training.ipynb` to train the Random Forest model (coming next)
+5. **Pricing Tool**: Use the final pricing tool for ML-corrected option prices (coming next)
 
 ### Project Workflow
 ```
@@ -91,6 +96,36 @@ The project uses a **Random Forest** model to predict the pricing error between 
 
 The final price is calculated as: `ML-Corrected Price = Black-Scholes Price + Predicted Error`
 
+## Feature Engineering
+
+The project implements comprehensive feature engineering to enhance model performance:
+
+### Core Features
+- **Moneyness**: S/K ratio indicating in/out-of-the-money status
+- **Time Features**: Time to expiration, days to expiry, short/long-term flags
+- **Volatility Features**: Implied volatility and volatility-time interactions
+
+### Engineered Features
+- **log_moneyness**: Log-transformed moneyness for better distribution
+- **sqrt_time_to_expiry**: Square root of time for volatility scaling
+- **vol_time_product**: Volatility × Time interaction
+- **vol_moneyness**: Volatility × Moneyness interaction
+- **rate_time**: Risk-free rate × Time interaction
+
+### Market Microstructure
+- **bid_ask_spread**: Ask - Bid price difference
+- **relative_spread**: Spread relative to market price
+- **log_volume**: Log-transformed trading volume
+- **log_open_interest**: Log-transformed open interest
+- **liquidity_score**: Combined volume and open interest metric
+
+### Option Classification
+- **is_itm/otm/atm**: Binary flags for moneyness categories
+- **is_call/put**: Option type indicators
+- **is_short_term/long_term**: Time-based classification
+
+All features are designed to capture the key factors that cause Black-Scholes pricing errors in real markets.
+
 ## Success Metrics
 
 - **Mean Absolute Error (MAE)**: Reduction compared to baseline Black-Scholes model
@@ -98,6 +133,3 @@ The final price is calculated as: `ML-Corrected Price = Black-Scholes Price + Pr
 - **R-squared**: Model explanatory power
 - **Latency**: Sub-second pricing response time
 
-## Contributors
-
-This project is part of the NYU FRE Bootcamp coursework focusing on practical machine learning applications in quantitative finance.
