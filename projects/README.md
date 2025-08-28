@@ -68,8 +68,13 @@ projects/
 1. **Data Pipeline**: Run `notebooks/01_data_fetching_and_processing.ipynb` to fetch and process options data
 2. **Exploratory Analysis**: Use `notebooks/02_exploratory_data_analysis.ipynb` for comprehensive EDA
 3. **Outlier Analysis**: Run `notebooks/03_sensitivity_outliers.ipynb` for outlier detection and sensitivity analysis
-4. **Model Training**: Open `notebooks/04_model_training.ipynb` to train the Random Forest model (coming next)
-5. **Pricing Tool**: Use the final pricing tool for ML-corrected option prices (coming next)
+4. **Model Training**: Run `notebooks/04_model_training_evaluation.ipynb` to train and evaluate models
+5. **API Usage**: Use `python app.py` for REST API or `streamlit run app_streamlit.py` for interactive dashboard
+
+### Production Usage
+- **Flask API**: `python app.py` (runs on http://localhost:5000)
+- **Streamlit Dashboard**: `streamlit run app_streamlit.py` (runs on http://localhost:8501)
+- **Batch Processing**: Use the API `/run_full_analysis` endpoint or dashboard batch analysis
 
 ### Project Workflow
 ```
@@ -125,6 +130,89 @@ The project implements comprehensive feature engineering to enhance model perfor
 - **is_short_term/long_term**: Time-based classification
 
 All features are designed to capture the key factors that cause Black-Scholes pricing errors in real markets.
+
+## API Endpoints
+
+### Flask REST API (`python app.py`)
+
+**Base URL**: `http://localhost:5000`
+
+#### Available Endpoints:
+- `GET /` - API documentation and health check
+- `POST /predict` - Predict option price with JSON payload
+- `GET /predict/<underlying>/<strike>/<time>/<volatility>` - Quick prediction with URL parameters  
+- `POST /run_full_analysis` - Run complete analysis pipeline
+- `GET /sample` - Get sample prediction for testing
+- `GET /health` - Health check
+
+#### Example API Request:
+```bash
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "underlying_price": 450.0,
+    "strike": 455.0,
+    "time_to_expiry": 0.0833,
+    "implied_volatility": 0.25,
+    "contract_type": "call"
+  }'
+```
+
+#### Example Response:
+```json
+{
+  "success": true,
+  "prediction": {
+    "black_scholes_price": 12.3456,
+    "predicted_error": -0.2345,
+    "ml_corrected_price": 12.1111,
+    "improvement": 0.2345,
+    "contract_type": "call"
+  }
+}
+```
+
+### Streamlit Dashboard (`streamlit run app_streamlit.py`)
+
+Interactive web interface with:
+- Single option pricing calculator
+- Batch analysis from CSV upload
+- Model performance monitoring  
+- Real-time visualization and results
+
+## Setup Instructions
+
+### From Fresh Git Clone:
+
+1. **Clone Repository**
+   ```bash
+   git clone <repository-url>
+   cd projects
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run Analysis Pipeline**
+   ```bash
+   # Option 1: Run notebooks in order
+   jupyter notebook notebooks/04_model_training_evaluation.ipynb
+   
+   # Option 2: Use API for full analysis
+   python app.py
+   # Then POST to http://localhost:5000/run_full_analysis
+   ```
+
+4. **Start Applications**
+   ```bash
+   # Flask API
+   python app.py
+   
+   # Streamlit Dashboard (separate terminal)
+   streamlit run app_streamlit.py
+   ```
 
 ## Success Metrics
 
