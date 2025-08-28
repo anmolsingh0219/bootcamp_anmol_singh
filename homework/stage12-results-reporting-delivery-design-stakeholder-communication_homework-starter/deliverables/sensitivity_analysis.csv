@@ -1,0 +1,6 @@
+Assumption,Baseline Scenario,Alternative Scenario,Impact,Risk Level
+Missing Data Treatment,Mean Imputation (MAE: $72.8),Drop Missing (MAE: $58.8),19.3% improvement,HIGH - Missing data bias
+Model Complexity,Linear Model (R²: 8.3%),Polynomial Model (R²: 12.4%),49% R² increase,MEDIUM - Overfitting risk
+Strike Price Segment,All Segments Combined,Mid-Strike Only,Reduced bias,HIGH - Limited applicability
+Sample Size,496 observations,421 complete cases,15% sample reduction,MEDIUM - Power reduction
+Volatility Range,0.2 - 1.2 range,Restricted range,Limited generalizability,HIGH - Extrapolation risk
