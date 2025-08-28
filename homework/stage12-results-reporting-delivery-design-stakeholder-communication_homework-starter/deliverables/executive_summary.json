@@ -1,0 +1,18 @@
+{
+  "executive_summary": {
+    "key_finding": "Options pricing model shows low predictive power (R\u00b2 = 8.3%) with significant bias across strike segments",
+    "main_risk": "Missing volatility data creates 19% performance degradation - systematic bias detected",
+    "recommendation": "Develop segment-specific models and implement comprehensive feature engineering before production use"
+  },
+  "model_performance": {
+    "best_scenario": "Drop Missing (MAE: $58.8)",
+    "worst_scenario": "Log Transform (MAE: $75.2)",
+    "confidence_interval": "MAE: $66.6 - $79.2 (95% CI)",
+    "r_squared_range": "7.1% - 15.6% across scenarios"
+  },
+  "subgroup_risks": {
+    "high_risk": "Low Strike options (107% under-prediction bias)",
+    "stable_segment": "Mid Strike options (balanced performance)",
+    "sample_distribution": "58% High Strike, 29% Mid Strike, 13% Low Strike"
+  }
+}
