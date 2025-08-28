@@ -1,0 +1,4 @@
+segment,count,mean_residual,mae,rmse,bias_direction
+Low_Strike,64,107.275,200.256,275.412,Under_prediction
+Mid_Strike,142,-10.049,94.134,127.956,Balanced
+High_Strike,290,42.147,125.783,168.234,Over_prediction
